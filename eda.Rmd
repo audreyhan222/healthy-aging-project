@@ -1,0 +1,11 @@
+---
+title: "eda"
+author: "Lauren Henderson"
+date: "2024-07-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
