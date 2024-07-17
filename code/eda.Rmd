@@ -9,3 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r factor.dataset}
+library(tidyverse)
+npha_data <- NPHA_doctor_visits
+
+npha_data <- mutate_all(npha_data, as.factor)
+
+
+
+```
+
