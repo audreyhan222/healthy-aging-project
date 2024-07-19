@@ -16,6 +16,112 @@ npha_data <- NPHA_doctor_visits
 npha_data <- mutate_all(npha_data, as.factor)
 
 
+```
 
+
+```{r}
+ggplot(npha_data, aes(x = `Dental Health`)) +
+  geom_bar() +
+  labs(title = "Dental Health Distribution")
+
+
+```
+
+```{r}
+ggplot(npha_data, aes(x = Employment)) +
+  geom_bar() +
+  labs(title = "Employment Distribution")
+```
+
+
+```{r}
+fil <- npha_data %>% filter(`Mental Health` == 5)
+head(fil)
+
+```
+
+```{r}
+ggplot(npha_data, aes(x = `Stress Keeps Patient from Sleeping`, fill = Race)) +
+  geom_bar() +
+  labs(title = "Stress Keeps Patient from Sleeping Distribution")
+```
+
+```{r}
+ggplot(npha_data, aes(x = `Medication Keeps Patient from Sleeping`, fill = Race)) +
+  geom_bar() +
+  labs(title = "Medication Keeps Patient from Sleeping Distribution")
+```
+
+```{r}
+ggplot(npha_data, aes(x = `Medication Keeps Patient from Sleeping`, fill = Gender)) +
+  geom_bar()
+
+```
+
+
+```{r}
+cont_table <- table(npha_data$Race, npha_data$`Prescription Sleep Medication`)
+
+chisq.test(cont_table)
+```
+```{r}
+cont_table <- table(npha_data$`Phyiscal Health`, npha_data$`Prescription Sleep Medication`)
+
+chisq.test(cont_table)
+```
+
+```{r}
+cont_table <- table(npha_data$Employment, npha_data$`Stress Keeps Patient from Sleeping`)
+
+chisq.test(cont_table)
+```
+
+```{r}
+good_phys <- npha_data %>% filter(`Phyiscal Health` == 5)
+
+ggplot(good_phys, aes(x = `Stress Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Of those with poor physical health, how many have stress-affected sleep?")
+  
+```
+```{r}
+good_phys <- npha_data %>% filter(`Phyiscal Health` == 5)
+
+ggplot(good_phys, aes(x = `Medication Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Of those with poor physical health, how many have med-affected sleep?")
+```
+```{r}
+good_phys <- npha_data %>% filter(`Phyiscal Health` == 5)
+
+ggplot(good_phys, aes(x = `Pain Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Of those with poor physical health, how many have pain-affected sleep?")
+```
+```{r}
+good_phys <- npha_data %>% filter(`Phyiscal Health` == 5)
+
+ggplot(good_phys, aes(x = `Bathroom Needs Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Of those with poor physical health, how many have bathroom-needs-affected sleep?")
+```
+```{r}
+good_phys <- npha_data %>% filter(`Phyiscal Health` == 5)
+
+ggplot(good_phys, aes(x = `Uknown Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Of those with poor physical health, how many have unknown-affected sleep?")
+```
+```{r}
+good_phys %>%  nrow()
+
+
+good_phys %>% summary()
+```
+
+```{r}
+cont_table <- table(npha_data$`Number of Doctors Visited`, npha_data$`Uknown Keeps Patient from Sleeping`)
+
+chisq.test(cont_table)
 ```
 
