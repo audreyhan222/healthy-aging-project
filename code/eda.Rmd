@@ -40,6 +40,12 @@ head(fil)
 
 ```
 
+
+```{r}
+ggplot(npha_data, )
+```
+
+
 ```{r}
 ggplot(npha_data, aes(x = `Stress Keeps Patient from Sleeping`, fill = Race)) +
   geom_bar() +
