@@ -30,11 +30,12 @@ Start with an open mind - recall exploratory data analysis. You've got a totally
 We're going to start building our toolbox by adding our functions. Whenever we want to use a new tool, we're going to come back up here and add it into this code block.
 
 ```{r initialization}
-#
-# The libraries you're going to use should go here, at the very top.
-# Add tidyverse. You know you're gonna use tidyverse!
-# Consider a unique random seed: set.seed(ANumberThatYouHappenToLike)
-#
+
+library('tidyverse')
+library('ggplot2')
+library('rsample')
+
+set.seed(9)
 
 ```
 
@@ -47,17 +48,16 @@ Typically, I split this section into two pieces; one explicitly for imports and 
 **Another important note** is that you should take notes in comments (lines beginning with #) to keep track of what occurs here - it's typically requested when you author research papers to note how many observations were removed, and for what reasons.
 
 ```{r dataImport}
-#
-#read_csv()...
-#data <- left_join(data, otherdata, by = matchingFeature)
-#
+
+npha_data <- read.csv("../data/NPHA-doctor-visits.csv")
 ```
 
 
 ```{r dataCleaning}
-#
-#drop.na()...
-#
+
+npha_data <- mutate_all(npha_data, as.factor)
+glimpse(npha_data)
+
 ```
 
 ## Exploratory Data Analysis
@@ -77,6 +77,111 @@ Make sure to document the driving idea behind each thread of thought; including 
 Once your data is in a workable state, here is where you'll run regressions and comparative tests to generate results to test the statistical questions you landed on after performing exploratory data analysis.
 
 Operate with the same diligence as before - separate chunks for separate tasks. Annotate everything. 
+
+
+### Chi Squared Tests: All variables assocation with Number of Doctors Visited
+```{r}
+# Physical Health
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Mental.Health)
+chisq.test(cont_table)
+# p-value: 0.002491
+
+# Mental Health
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Mental.Health)
+chisq.test(cont_table)
+# p-value: 0.4293
+
+# Dental Health
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Dental.Health)
+chisq.test(cont_table)
+# p-value: 0.4839
+
+# Employment
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Employment)
+chisq.test(cont_table)
+# p-value: 0.01672
+
+# Stress Keeps Patient from Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Stress.Keeps.Patient.from.Sleeping)
+chisq.test(cont_table)
+# p-value: 0.2417
+
+# Medication Keeps Patient from Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Medication.Keeps.Patient.from.Sleeping)
+chisq.test(cont_table)
+# p-value: 0.005195
+
+# Pain Keeps Patient from Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Pain.Keeps.Patient.from.Sleeping)
+chisq.test(cont_table)
+# p-value: 0.08851
+
+# Bathroom Needs Keeps Patient from Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Bathroom.Needs.Patient.from.Sleeping)
+chisq.test(cont_table)
+# p-value: 0.2745
+
+# Unknown Keeps Patient from Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Uknown.Keeps.Patient.from.Sleeping)
+chisq.test(cont_table)
+# p-value: 0.7927
+
+# Trouble Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Trouble.Sleeping)
+chisq.test(cont_table)
+# p-value: 0.4044
+
+# Trouble Sleeping
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Prescription.Sleep.Medication)
+chisq.test(cont_table)
+# p-value: 0.01208
+
+# Race
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Race)
+chisq.test(cont_table)
+# p-value: 0.01928
+
+# Gender
+cont_table <- table(npha_data$Number.of.Doctors.Visited, npha_data$Gender)
+chisq.test(cont_table)
+# p-value: 0.6787
+```
+
+
+### Basic Logistic Regression Model with All Variables
+```{r}
+# Splitting Response Variable (Number of Doctors Visited into binary categories)
+basic_model_data <- npha_data %>% 
+  mutate(num_doctors = case_when(Number.of.Doctors.Visited == 1 ~ 0,
+                                 Number.of.Doctors.Visited == 2 ~ 0,
+                                 Number.of.Doctors.Visited == 3 ~ 1))
+
+# Removing all rows in which -1 (Refused) is in the Physical Health Column
+basic_model_data <- basic_model_data %>% mutate_all(as.factor) %>% filter(Phyiscal.Health != -1)
+
+data_split <- initial_split(basic_model_data, prop = 0.7)
+
+train <- training(data_split)
+test <- testing(data_split)
+log_mod <- glm(num_doctors ~
+                 Phyiscal.Health + 
+                 Mental.Health + 
+                 Dental.Health + 
+                 Employment +
+                 Stress.Keeps.Patient.from.Sleeping +
+                 Medication.Keeps.Patient.from.Sleeping +
+                 Pain.Keeps.Patient.from.Sleeping +
+                 Bathroom.Needs.Keeps.Patient.from.Sleeping +
+                 Uknown.Keeps.Patient.from.Sleeping +
+                 Trouble.Sleeping +
+                 Prescription.Sleep.Medication + 
+                 Race +
+                 Gender,  family = binomial, data = train)
+
+summary(log_mod)
+```
+
+
 
 ## Results
 
