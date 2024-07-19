@@ -1,0 +1,22 @@
+---
+title: "Race and Gender Distribution"
+author: "Diego Galindo"
+date: "2024-07-19"
+output: html_document
+---
+
+```{r}
+ggplot(data = agingData,
+       aes(x = Race)) +
+  geom_bar(color = "black",
+           fill = "darkseagreen4") + 
+theme_light()
+```
+
+
+```{r}
+ggplot(data = agingData,
+       aes(x = Gender)) +
+  geom_bar(color = "black",
+           fill = "darkseagreen4")
+```
