@@ -1,0 +1,53 @@
+da_data <- da37305.0001
+
+head(da_data)
+cleaned_da_data <- da_data %>% 
+  select(-2, -3, -7, -32:-53, -55:-98, -Q4_OTHER, -Q6_OTHER, -Q14_OTHER, -Q37_OTHER, -Q45_OTHER)
+
+cleaned_da_data <- cleaned_da_data %>% 
+  mutate(XSENIOR = case_when(XSENIOR == "(1) 50-64 years old" ~ as.factor(1),
+                             XSENIOR == "(2) 65-80 years old" ~ as.factor(2)),
+         Q1 = case_when(Q1 == "(1) Excellent" ~ as.factor(1),
+                        Q1 == "(2) Very Good" ~ as.factor(2),
+                        Q1 == "(3) Good" ~ as.factor(3),
+                        Q1 == "(4) Fair" ~ as.factor(4),
+                        Q1 == "(5) Poor" ~ as.factor(5)),
+         Q2 = case_when(Q2 == "(1) Excellent" ~ as.factor(1),
+                        Q2 == "(2) Very Good" ~ as.factor(2),
+                        Q2 == "(3) Good" ~ as.factor(3),
+                        Q2 == "(4) Fair" ~ as.factor(4),
+                        Q2 == "(5) Poor" ~ as.factor(5)),
+         Q2A = case_when(Q2A == "(1) Excellent" ~ as.factor(1),
+                        Q2A == "(2) Very Good" ~ as.factor(2),
+                        Q2A == "(3) Good" ~ as.factor(3),
+                        Q2A == "(4) Fair" ~ as.factor(4),
+                        Q2A == "(5) Poor" ~ as.factor(5)),
+         Q3 = case_when(Q3 == "(1) 0" ~ as.factor(0),
+                        Q3 == "(2) 1" ~ as.factor(1),
+                        Q3 == "(3) 2" ~ as.factor(2),
+                        Q3 == "(4) 3" ~ as.factor(3),
+                        Q3 == "(5) 4 or more" ~ as.factor("4+")),
+         Q4 = case_when(Q4_1 == "(1) Yes" ~ as.factor(1),
+                        Q4_2 == "(1) Yes" ~ as.factor(2),
+                        Q4_3 == "(1) Yes" ~ as.factor(3),
+                        Q4_4 == "(1) Yes" ~ as.factor(4),
+                        Q4_5 == "(1) Yes" ~ as.factor(5),
+                        Q4_6 == "(1) Yes" ~ as.factor(6),
+                        Q4_7 == "(1) Yes" ~ as.factor(7),
+                        Q4_8 == "(1) Yes" ~ as.factor(8),
+                        Q4_9 == "(1) Yes" ~ as.factor(9),
+                        Q4_10 == "(1) Yes" ~ as.factor(10),
+                        Q4_REFUSED == "(1) Yes" ~ as.factor(-1)),
+         Q5 = case_when(Q5 == "(1) Yes" ~ as.factor(1),
+                        Q5 == "(2) No" ~ as.factor(2),
+                        Q5 == "(3) Don't Know" ~ as.factor(3)),
+         Q7 = case_when(Q7 == "(1) Working full-time" ~ as.factor(1),
+                        Q7 == "(2) Working part-time" ~ as.factor(2),
+                        Q7 == "(3) Retired" ~ as.factor(3),
+                        Q7 == "(4) Not working at this time" ~ as.factor(4)),
+         Q46 = case_when(Q46 == "(1) 0" ~ as.factor(1),
+                         Q46 == "(2) 1" ~ as.factor(2),
+                         Q46 == "(3) 2-3" ~ as.factor(3),
+                         Q46 == "(4) 4-5" ~ as.factor(4),
+                         Q46 == "(5) 6 or more" ~ as.factor(5)))
+

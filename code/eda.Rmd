@@ -14,8 +14,126 @@ library(tidyverse)
 npha_data <- NPHA_doctor_visits
 
 npha_data <- mutate_all(npha_data, as.factor)
+```
 
+# EDA
 
+## Single Variable Analysis
+```{r}
+ggplot(npha_data, aes(x = `Pain Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Pain vs. Count")
+```
 
+Bathroom Needs
+```{r}
+ggplot(npha_data, aes(x = `Bathroom Needs Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Bathroom vs. Count")
+```
+
+Unknown Factors
+```{r}
+ggplot(npha_data, aes(x = `Uknown Keeps Patient from Sleeping`)) +
+  geom_bar() +
+  labs(title = "Unknown vs. Count")
+```
+
+General Trouble Sleeping
+```{r}
+ggplot(npha_data, aes(x = `Trouble Sleeping`)) +
+  geom_bar() +
+  labs(title = "Trouble Sleeping vs. Count")
+```
+
+## 2-Variable Relationships
+
+Pain Stops Sleeping + Ethnicity
+```{r}
+ggplot(npha_data, aes(x = `Pain Keeps Patient from Sleeping`,
+                      fill = Race)) +
+geom_bar() +
+labs(title = "Pain vs. Count")
+```
+
+Pain Stops Sleeping + Gender
+```{r}
+ggplot(npha_data, aes(x = `Pain Keeps Patient from Sleeping`,
+                      fill = Gender)) +
+geom_bar() +
+labs(title = "Pain vs. Count")
+```
+
+Bathroom + Ethnicity
+```{r}
+ggplot(npha_data, aes(x = `Bathroom Needs Keeps Patient from Sleeping`,
+                      fill = Race)) +
+  geom_bar() +
+  labs(title = "Bathroom vs. Count")
+```
+
+Bathroom + Gender
+```{r}
+ggplot(npha_data, aes(x = `Bathroom Needs Keeps Patient from Sleeping`,
+                      fill = Gender)) +
+  geom_bar() +
+  labs(title = "Bathroom vs. Count")
+```
+
+Unknown Factors + Ethnicity
+```{r}
+ggplot(npha_data, aes(x = `Uknown Keeps Patient from Sleeping`,
+                      fill = Race)) +
+  geom_bar() +
+  labs(title = "Unknown vs. Count")
+```
+
+Unknown Factors + Gender
+```{r}
+ggplot(npha_data, aes(x = `Uknown Keeps Patient from Sleeping`,
+                      fill = Gender)) +
+  geom_bar() +
+  labs(title = "Unknown vs. Count")
+
+glimpse(npha_data)
+```
+
+Physical Health vs. Medication
+```{r}
+ggplot(npha_data, aes(x = `Prescription Sleep Medication`,
+                      y = `Phyiscal Health`)) +
+  geom_point() +
+  labs(title = "Unknown vs. Count")
+```
+
+Employment vs. Physical Health
+```{r}
+ggplot(npha_data, aes(x = Employment,
+                      y = `Phyiscal Health`)) +
+  geom_point() +
+  labs(title = "Employment vs. Physical Health")
+```
+
+Medication
+```{r}
+medication_data <- npha_data %>% 
+  filter(`Prescription Sleep Medication` == 1 | `Prescription Sleep Medication` == 2)
+
+ggplot(medication_data, aes(x = `Medication Keeps Patient from Sleeping`)) +
+geom_bar()
+  
+```
+
+Disrupted Sleep
+```{r}
+disrupted_data <- npha_data %>% 
+  filter(`Stress Keeps Patient from Sleeping` == 1 |
+           `Medication Keeps Patient from Sleeping` == 1 |
+           `Pain Keeps Patient from Sleeping` == 1 |
+           `Bathroom Needs Keeps Patient from Sleeping` == 1 |
+           `Uknown Keeps Patient from Sleeping` == 1)
+```
+```{r}
+ggplot()
 ```
 
