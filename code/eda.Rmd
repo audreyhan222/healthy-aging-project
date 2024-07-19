@@ -42,7 +42,14 @@ head(fil)
 
 
 ```{r}
-ggplot(npha_data, )
+good_health <- npha_data %>%
+  filter(`Phyiscal Health` != -1) %>% 
+  mutate(good_health = case_when(`Phyiscal Health` == 1 ~ 1,
+                                 `Phyiscal Health` == 2 ~ 1,
+                                 .default = 0))
+
+ggplot(good_health, aes(x = Race)) + 
+  geom_bar()
 ```
 
 
