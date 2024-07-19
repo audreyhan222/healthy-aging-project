@@ -9,13 +9,89 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+Set Up
+
 ```{r factor.dataset}
 library(tidyverse)
 npha_data <- NPHA_doctor_visits
 
 npha_data <- mutate_all(npha_data, as.factor)
 
+library(ggplot2)
 
+library(rsample)
+```
+
+Exporing Variables:
+
+Doctors Visited-
+
+```{r}
+npha_data %>% 
+  ggplot(aes(x = `Number of Doctors Visited`)) +
+  geom_bar()
+glimpse(npha_data)
+```
+1: 0-1 doctors (least)
+2: 2-3 doctors (most)
+3: 4 or more doctors
+
+Age
+
+```{r}
+npha_data %>% 
+  ggplot(aes(x = Age)) +
+  geom_bar()
+glimpse(npha_data)
+```
+1: 50-65
+2: 65-80
+
+All data is within second group.
+
+Physical Health
+
+```{r}
+npha_data %>% 
+  ggplot(aes(x = `Phyiscal Health`)) +
+  geom_bar()
+glimpse(npha_data)
+```
+
+-1: NA
+1: Excellent
+2: Very Good
+3: Good (Most)
+4: Fair
+5: Poor (Least)
+
+Mental Health
+
+```{r}
+npha_data %>% 
+  ggplot(aes(x = `Mental Health`)) +
+  geom_bar()
+glimpse(npha_data)
+```
+
+-1: NA
+1: Excellent
+2: Very Good
+3: Good
+4: Fair
+5: Poor (Least)
+
+Mental health issues are very uncommon among older generations; possibly more stigmatized among older generationns, rather than not existing.
+
+
+Comparing Health to Demographics
+
+
+Physical Health based on _
+
+-gender
+
+```{r}
 
 ```
 

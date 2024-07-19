@@ -1,0 +1,19 @@
+---
+title: "Jade- Healthy Aging"
+author: "Jade Iry"
+date: "2024-07-17"
+output: html_document
+---
+
+Use ggsave to save any generated ggplots to computer
+
+To-Do: Generate plots on
+- Doctors Visited
+- Age
+- Physical Health
+- Mental Health
+
+```{r}
+
+```
+
