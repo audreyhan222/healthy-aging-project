@@ -66,10 +66,15 @@ cleaned_da_data <- cleaned_da_data %>%
                              grepl("(5)", PPMARIT) ~ as.factor(5)),
          EDUC_3CAT= case_when(grepl("(1)", EDUC_3CAT) ~ as.factor(1),
                               grepl("(2)", EDUC_3CAT) ~ as.factor(2),
-                              grepl("(3)", EDUC_3CAT) ~ as.factor(3)),)
+                              grepl("(3)", EDUC_3CAT) ~ as.factor(3)),
+         PPETHM = case_when(grepl("(1)", PPETHM) ~ as.factor(1),
+                            grepl("(2)", PPETHM) ~ as.factor(2),
+                            grepl("(3)", PPETHM) ~ as.factor(3),
+                            grepl("(4)", PPETHM) ~ as.factor(4),
+                            grepl("(5)", PPETHM) ~ as.factor(5)),)
 
 cleaned_da_data <- cleaned_da_data %>% 
-  select(-7:-17)
+  select(-7:-17, -1:-6)
 
 filtered_data <- cleaned_da_data %>% 
-  filter((Q14_2 == 1 | Q14_2 == 0) & (Q14_2 == 1 | Q14_2 == 0))
+  drop_na()

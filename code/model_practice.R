@@ -23,3 +23,7 @@ pred_prob <- logistic_model %>%
 
 predicted.classes <- ifelse(pred_prob > 0.5, "1", "0")
 mean(predicted.classes == test_data$num_doctors)
+
+ggplot(npha_data, aes(x = `num_doctors`,)) +
+  geom_bar() +
+  labs(title = "Unknown vs. Count")
