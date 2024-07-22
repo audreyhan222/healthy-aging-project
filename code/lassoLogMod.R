@@ -29,7 +29,8 @@ test_y <- testing(data_split) %>% select(num_doctors1)%>% as.matrix()
 
 fit <- cv.glmnet(train_x,train_y,  family = "binomial", type.measure = "class", nfolds = 10)
 
-preds <- predict(fit, newx = test_x, type = "class")
+preds <- predict(fit, newx = test_x, type = "class", s = "lambda.min")
 
 mean(preds == test_y)
 
+coef(fit)

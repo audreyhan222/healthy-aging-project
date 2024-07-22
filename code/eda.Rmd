@@ -137,4 +137,7 @@ cont_table <- table(npha_data$`Number of Doctors Visited`, npha_data$`Uknown Kee
 
 chisq.test(cont_table)
 ```
+```{r}
+
+```
 

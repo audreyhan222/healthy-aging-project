@@ -35,7 +35,6 @@ log_mod <- glm(num_doctors ~
 
 
 
-
 pred_prob <- log_mod %>% 
   predict(test, type = "response")
 
