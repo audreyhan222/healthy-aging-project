@@ -36,6 +36,4 @@ fit <- cv.glmnet(train_x,train_y,  family = "multinomial", type.measure = "class
 preds <- predict(fit, newx = test_x, type = "class", s = "lambda.min")
 
 
-accuracy <- mean(preds == as.data.frame(test_y))
-accuracy
 
