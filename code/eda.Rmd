@@ -22,6 +22,7 @@ npha_data <- mutate_all(npha_data, as.factor)
 ```{r}
 ggplot(npha_data, aes(x = `Pain Keeps Patient from Sleeping`)) +
   geom_bar() +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
   labs(title = "Pain vs. Count")
 ```
 
