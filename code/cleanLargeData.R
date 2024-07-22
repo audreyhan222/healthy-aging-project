@@ -9,72 +9,26 @@ cleaned_da_data <- da_data %>%
          -PPREG4, -Q3, -Q16, -XSENIOR, -MEDICARE_ANY:-PRIVATE_ANY, -SLEEP_PROBLEMS_3CAT:-PROB_WAKING,
          -PASSIVE:-PHARM_LESSCOST, -POOR_SLEEP_NORMAL, -Q1:-Q2, -Q4_1:-Q4_REFUSED, -Q7,
          -Q4_RECODE, -PPINCIMP, -PPEDUCAT, -Q8, -Q10, -PPMSACAT, -Q2A, -Q5, -DENTAL_APPROACH:-REC_LOWPRICE,
-         -INSURANCE_ANY)
+         -INSURANCE_ANY, -RACE_ETH)
+
 
 cleaned_da_data <- cleaned_da_data %>% 
-  mutate(Q14_1 = case_when(grepl("(0)", Q14_1) ~ as.factor(0),
-                         grepl("(1)", Q14_1) ~ as.factor(1)),
-         Q14_2 = case_when(grepl("(0)", Q14_2) ~ as.factor(0),
-                           grepl("(1)", Q14_2) ~ as.factor(1)),
-         Q14_3 = case_when(grepl("(0)", Q14_3) ~ as.factor(0),
-                           grepl("(1)", Q14_3) ~ as.factor(1)),
-         Q14_4 = case_when(grepl("(0)", Q14_4) ~ as.factor(0),
-                           grepl("(1)", Q14_4) ~ as.factor(1)),
-         Q14_5 = case_when(grepl("(0)", Q14_5) ~ as.factor(0),
-                           grepl("(1)", Q14_5) ~ as.factor(1)),
-         Q14_6 = case_when(grepl("(0)", Q14_6) ~ as.factor(0),
-                           grepl("(1)", Q14_6) ~ as.factor(1)),
-         Q14_7 = case_when(grepl("(0)", Q14_7) ~ as.factor(0),
-                           grepl("(1)", Q14_7) ~ as.factor(1)),
-         Q14_8 = case_when(grepl("(0)", Q14_8) ~ as.factor(0),
-                           grepl("(1)", Q14_8) ~ as.factor(1)),
-         Q14_9 = case_when(grepl("(0)", Q14_9) ~ as.factor(0),
-                           grepl("(1)", Q14_9) ~ as.factor(1)),
-         Q15 = case_when(grepl("(-1)", Q15) ~ as.factor(-1),
-                         grepl("(1)", Q15) ~ as.factor(1),
-                         grepl("(2)", Q15) ~ as.factor(2),
-                         grepl("(3)", Q15) ~ as.factor(3)),
-         Q19A = case_when(grepl("(1)", Q19A) ~ as.factor(1),
-                          grepl("(2)", Q19A) ~ as.factor(2),
-                          grepl("(3)", Q19A) ~ as.factor(3)),
-         Q19B = case_when(grepl("(1)", Q19B) ~ as.factor(1),
-                          grepl("(2)", Q19B) ~ as.factor(2),
-                          grepl("(3)", Q19B) ~ as.factor(3)),
-         Q19C = case_when(grepl("(1)", Q19C) ~ as.factor(1),
-                          grepl("(2)", Q19C) ~ as.factor(2),
-                          grepl("(3)", Q19C) ~ as.factor(3)),
-         Q19D = case_when(grepl("(1)", Q19D) ~ as.factor(1),
-                          grepl("(2)", Q19D) ~ as.factor(2),
-                          grepl("(3)", Q19D) ~ as.factor(3)),
-         Q46 = case_when(Q46 == "(1) 0" ~ as.factor(1),
-                         Q46 == "(2) 1" ~ as.factor(2),
-                         Q46 == "(3) 2-3" ~ as.factor(3),
-                         Q46 == "(4) 4-5" ~ as.factor(4),
-                         Q46 == "(5) 6 or more" ~ as.factor(5)),
-         Q61 = case_when(grepl("(1)", Q61) ~ as.factor(1),
-                         grepl("(2)", Q61) ~ as.factor(2),
-                         grepl("(3)", Q61) ~ as.factor(3)),
-         Q71 = case_when(grepl("(1)", Q61) ~ as.factor(1),
-                         grepl("(2)", Q61) ~ as.factor(2),
-                         grepl("(3)", Q61) ~ as.factor(3)),
-         PPGENDER = case_when(grepl("(1)", PPGENDER) ~ as.factor(1),
-                              grepl("(2)", PPGENDER) ~ as.factor(2)),
-         PPMARIT = case_when(grepl("(1)", PPMARIT) ~ as.factor(1),
-                             grepl("(2)", PPMARIT) ~ as.factor(2),
-                             grepl("(3)", PPMARIT) ~ as.factor(3),
-                             grepl("(4)", PPMARIT) ~ as.factor(4),
-                             grepl("(5)", PPMARIT) ~ as.factor(5)),
-         EDUC_3CAT= case_when(grepl("(1)", EDUC_3CAT) ~ as.factor(1),
-                              grepl("(2)", EDUC_3CAT) ~ as.factor(2),
-                              grepl("(3)", EDUC_3CAT) ~ as.factor(3)),
-         PPETHM = case_when(grepl("(1)", PPETHM) ~ as.factor(1),
-                            grepl("(2)", PPETHM) ~ as.factor(2),
-                            grepl("(3)", PPETHM) ~ as.factor(3),
-                            grepl("(4)", PPETHM) ~ as.factor(4),
-                            grepl("(5)", PPETHM) ~ as.factor(5)),)
+  select(-7:-17, -1: -6, -AGE_CAT)
 
 cleaned_da_data <- cleaned_da_data %>% 
-  select(-7:-17, -1:-6)
-
-filtered_data <- cleaned_da_data %>% 
   drop_na()
+
+cleaned_da_data <- cleaned_da_data %>% 
+  mutate(SLEEP_OTC = case_when(SLEEP_OTC == "(1) Use regularly" ~ as.factor("(1) Use"),
+                               SLEEP_OTC == "(2) Use occasionally" ~ as.factor("(1) Use"),
+                               .default = SLEEP_OTC),
+         SLEEP_MEDS = case_when(SLEEP_MEDS == "(1) Use regularly" ~ as.factor("(1) Use"),
+                                SLEEP_MEDS == "(2) Use occasionally" ~ as.factor("(1) Use"),
+                               .default = SLEEP_MEDS),
+         PPMARIT = case_when(SLEEP_MEDS == "(1) Married" ~ as.factor("(2) Married"),
+                             
+                             .default = PPMARIT)) %>% 
+  filter(PPMARIT != "PPMARIT(-1)")
+
+glimpse(cleaned_da_data)
+summary(cleaned_da_data)
