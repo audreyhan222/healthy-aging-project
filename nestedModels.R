@@ -5,9 +5,7 @@ set.seed(3)
 npha_data <- read_csv("data/NPHA-doctor-visits.csv")
 
 
-#clean data
 npha_data <- npha_data %>% 
-  filter(Race == 1) %>% 
   mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
                                        `Phyiscal Health` == 5 ~ 4,
                                        .default = `Phyiscal Health`),
@@ -23,7 +21,6 @@ npha_data <- npha_data %>%
   mutate(`Trouble Sleeping` = case_when(`Trouble Sleeping` == 2 ~1, .default = `Trouble Sleeping`)) %>% 
   mutate(`Prescription Sleep Medication` = case_when(`Prescription Sleep Medication` == 2 ~1, .default = `Prescription Sleep Medication`)) %>% 
   mutate(Race = case_when(Race != 1 ~ 0, .default = Race)) %>% 
-  mutate_all(as.factor) %>%
   select(-Age)
 
 npha_data <- npha_data %>% 
@@ -42,24 +39,49 @@ npha_data <- npha_data %>%
          .keep = "unused") %>% 
   select(-Race)
 
+twothreesubset <- npha_data %>% filter(`Number of Doctors Visited` != 2)
 
-dummies <- as.data.frame(model.matrix(~.-1, npha_data))
-data_split <- initial_split(dummies, prop = 0.3)
+twothreesubset <- twothreesubset %>% mutate_all(as.factor)
+
+
+
+data_split_1 <- initial_split(twothreesubset, prop = 0.7)
 #need to drop response variables
 
-train_x <- training(data_split) %>% select(-`Number of Doctors Visited`, -1:-3) %>% as.matrix()
-train_y <- training(data_split) %>% select(`Number of Doctors Visited`) %>% as.matrix()
+train <- training(data_split_1)
+test <- testing(data_split_1)
 
-test_x <- testing(data_split) %>% select(-`Number of Doctors Visited`, -1:-3)%>% as.matrix()
-test_y <- testing(data_split) %>% select(`Number of Doctors Visited`)%>% as.matrix()
+train_y <- train$`Number of Doctors Visited`
+
+test_y <- test$`Number of Doctors Visited`
+train_dummies <- model.matrix(~.-1, train[-1])
+test_dummies <- model.matrix(~.-1, test[-1])
 
 
 #fit model with lasso
 
-fit <- cv.glmnet(train_x,train_y,  family = "binomial", type.measure = "class", nfolds = 10)
+#fit <- cv.glmnet(train_dummies,train_y,family = "binomial", alpha =0.5, nfolds = 10, keep = TRUE)
 
-preds <- predict(fit, newx = test_x, type = "class", s = "lambda.min")
+fit <- cv.glmnet(train_dummies,train_y,family = "binomial", alpha =0.5, type.measure = "class", nfolds = 10, keep = TRUE)
 
-mean(preds == test_y)
 
-coef(fit)
+preds <- predict(fit, newx = test_dummies, type = "response", s ="lambda.min")
+
+idmin = match(fit$lambda.min, fit$lambda)
+fit$lambda
+fit$lambda.min
+
+idmin
+
+library(pROC)
+
+roc_curve <- roc(test_y, preds)
+
+plot(roc_curve)
+
+plot(roc.glmnet(fit, newx = test_dummies, newy = test_y))
+
+attr <- roc.glmnet(fit, newx = test_dummies, newy = test_y)
+attr
+
+#assess.glmnet(fit, newx = test_dummies, newy = test_y, s = 0.01)

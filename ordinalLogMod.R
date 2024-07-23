@@ -1,13 +1,12 @@
 library(tidyverse)
 library(rsample)
 library(glmnet)
+library(MASS)
 set.seed(3)
 npha_data <- read_csv("data/NPHA-doctor-visits.csv")
 
 
-#clean data
-npha_data <- npha_data %>% 
-  filter(Race == 1) %>% 
+npha_data <- npha_data %>%
   mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
                                        `Phyiscal Health` == 5 ~ 4,
                                        .default = `Phyiscal Health`),
@@ -23,8 +22,7 @@ npha_data <- npha_data %>%
   mutate(`Trouble Sleeping` = case_when(`Trouble Sleeping` == 2 ~1, .default = `Trouble Sleeping`)) %>% 
   mutate(`Prescription Sleep Medication` = case_when(`Prescription Sleep Medication` == 2 ~1, .default = `Prescription Sleep Medication`)) %>% 
   mutate(Race = case_when(Race != 1 ~ 0, .default = Race)) %>% 
-  mutate_all(as.factor) %>%
-  select(-Age)
+  dplyr::select(-Age)
 
 npha_data <- npha_data %>% 
   mutate(Physical_Health = `Phyiscal Health`,
@@ -40,26 +38,37 @@ npha_data <- npha_data %>%
          Prescription_Sleep_Medication = `Prescription Sleep Medication`,
          Race = Race,
          .keep = "unused") %>% 
-  select(-Race)
+        mutate_all(as.factor)
 
 
-dummies <- as.data.frame(model.matrix(~.-1, npha_data))
-data_split <- initial_split(dummies, prop = 0.3)
+
+
+data_split <- initial_split(npha_data, prop = 0.3)
 #need to drop response variables
+train <- training(data_split)
+test <- testing(data_split)
 
-train_x <- training(data_split) %>% select(-`Number of Doctors Visited`, -1:-3) %>% as.matrix()
-train_y <- training(data_split) %>% select(`Number of Doctors Visited`) %>% as.matrix()
+test_x <- test %>% 
+          dplyr::select(-`Number of Doctors Visited`)
 
-test_x <- testing(data_split) %>% select(-`Number of Doctors Visited`, -1:-3)%>% as.matrix()
-test_y <- testing(data_split) %>% select(`Number of Doctors Visited`)%>% as.matrix()
+test_y <- test$`Number of Doctors Visited`
 
+mod <- polr(`Number of Doctors Visited` ~ ., data = train, Hess =TRUE, method = "cloglog")
+preds <- predict(mod, newdata = test_x)
 
-#fit model with lasso
-
-fit <- cv.glmnet(train_x,train_y,  family = "binomial", type.measure = "class", nfolds = 10)
-
-preds <- predict(fit, newx = test_x, type = "class", s = "lambda.min")
+preds
 
 mean(preds == test_y)
 
-coef(fit)
+
+summary(mod)
+
+# 
+# library(BSDA)
+# 
+# ctable <- coef(summary(mod))
+# p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) *2
+# 
+# ctable <- cbind(ctable, "p value" = p)
+# 
+# ctable

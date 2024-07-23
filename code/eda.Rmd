@@ -13,7 +13,40 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 npha_data <- NPHA_doctor_visits
 
-npha_data <- mutate_all(npha_data, as.factor)
+
+npha_data <- npha_data %>%
+  mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
+                                       `Phyiscal Health` == 5 ~ 4,
+                                       .default = `Phyiscal Health`),
+         `Dental Health` = case_when(`Dental Health` == 2 ~ 1,
+                                     `Dental Health` == 5 ~ 4,
+                                     `Dental Health` == 6 ~ 4,
+                                     .default = `Dental Health`))
+
+npha_data <- npha_data %>% 
+  filter(`Phyiscal Health` != -1, `Mental Health` != -1, `Dental Health` != -1, `Trouble Sleeping` != -1, `Prescription Sleep Medication` != -1) %>%
+  mutate(`Mental Health` = case_when(`Mental Health` == 5 ~3, `Mental Health` ==4 ~3, .default = `Mental Health`)) %>% 
+  mutate(Employment = case_when(Employment == 2 ~1, .default = Employment)) %>% 
+  mutate(`Trouble Sleeping` = case_when(`Trouble Sleeping` == 2 ~1, .default = `Trouble Sleeping`)) %>% 
+  mutate(`Prescription Sleep Medication` = case_when(`Prescription Sleep Medication` == 2 ~1, .default = `Prescription Sleep Medication`)) %>% 
+  mutate(Race = case_when(Race != 1 ~ 0, .default = Race)) %>% 
+  dplyr::select(-Age)
+
+npha_data <- npha_data %>% 
+  mutate(Physical_Health = `Phyiscal Health`,
+         Mental_Health = `Mental Health`,
+         Dental_Health = `Dental Health`,
+         Employment = Employment,
+         Trouble_Sleeping = `Trouble Sleeping`,
+         Stress_Sleeping = `Stress Keeps Patient from Sleeping`,
+         Pain_Sleeping = `Pain Keeps Patient from Sleeping`,
+         Bathroom_Sleeping = `Bathroom Needs Keeps Patient from Sleeping`,
+         Unknown_Sleeping = `Uknown Keeps Patient from Sleeping`,
+         Medication_Sleeping = `Medication Keeps Patient from Sleeping`,
+         Prescription_Sleep_Medication = `Prescription Sleep Medication`,
+         Race = Race,
+         .keep = "unused") %>% 
+        mutate_all(as.factor)
 
 
 ```
@@ -138,6 +171,27 @@ cont_table <- table(npha_data$`Number of Doctors Visited`, npha_data$`Uknown Kee
 chisq.test(cont_table)
 ```
 ```{r}
+ggplot(npha_data, aes(`Number of Doctors Visited`)) +
+  geom_bar()
+```
 
+```{r}
+nonwhite <- npha_data %>% 
+  filter(Race != 1)
+
+white <- npha_data %>% 
+  filter(Race == 1)
+
+white_table <- table(white$Pain_Sleeping, white$`Number of Doctors Visited`)
+
+nonwhite_table <- table(nonwhite$Pain_Sleeping, nonwhite$`Number of Doctors Visited`)
+
+# 
+# chisq.test(white_table)
+# 
+# chisq.test(nonwhite_table)
+
+white_table
+nonwhite_table
 ```
 
