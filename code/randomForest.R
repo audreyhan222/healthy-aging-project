@@ -1,6 +1,7 @@
 library(tidyverse)
 library(rsample)
-library(glmnet)
+library(randomForest)
+
 set.seed(3)
 npha_data <- read_csv("data/NPHA-doctor-visits.csv")
 
@@ -45,34 +46,19 @@ npha_data <- npha_data %>%
     .keep = "unused"
   )
 
-  
-  
-summary(npha_data)
 
-
-data_split <- initial_split(npha_data, prop = 0.3)
+data_split <- initial_split(npha_data, prop = 0.7)
 
 train <- training(data_split)
 test <- testing(data_split)
 
-train_y <- train$`Number of Doctors Visited`
+rf <- randomForest(
+  `Number of Doctors Visited` ~ .,
+  data = train,
+  importance = TRUE,
+  proximity = TRUE,
+  ntrees = 500
+)
+preds <- predict(rf, newdata = test[-1])
 
-test_y <- test$`Number of Doctors Visited`
-train_dummies <- model.matrix(~.-1, train[-1])
-test_dummies <- model.matrix(~.-1, test[-1])
-#need to drop response variables
-
-
-
-#fit model with lasso
-
-fit <- cv.glmnet(train_dummies,train_y,  family = "multinomial", 
-                 type.measure = "class", nfolds = 10, alpha = 0.5)
-
-preds <- predict(fit, newx = test_dummies, type = "class", s = "lambda.min")
-
-pred_train <- predict(fit, newx = train_dummies, type ="class", s = "lambda.min")
-mean(preds==as.data.frame(test_y))
-
-coef(fit)
-
+mean(preds == test$`Number of Doctors Visited`)
