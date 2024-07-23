@@ -10,6 +10,16 @@ npha_data <- read_csv("data/NPHA-doctor-visits.csv")
 #clean data
 
 npha_data <- npha_data %>% 
+  filter(Race == 1) %>% 
+  mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
+                                     `Phyiscal Health` == 5 ~ 4,
+                                     .default = `Phyiscal Health`),
+         `Dental Health` = case_when(`Dental Health` == 2 ~ 1,
+                                     `Dental Health` == 5 ~ 4,
+                                     `Dental Health` == 6 ~ 4,
+                                     .default = `Dental Health`))
+
+npha_data <- npha_data %>% 
   filter(`Phyiscal Health` != -1, `Mental Health` != -1, `Dental Health` != -1, `Trouble Sleeping` != -1, `Prescription Sleep Medication` != -1) %>%
   mutate(`Mental Health` = case_when(`Mental Health` == 5 ~3, `Mental Health` ==4 ~3, .default = `Mental Health`)) %>% 
   mutate(Employment = case_when(Employment == 2 ~1, .default = Employment)) %>% 
@@ -35,6 +45,7 @@ npha_data <- npha_data %>%
          .keep = "unused")
 
 
+
 summary(npha_data)
 rand_forest_model <- randomForest(`Number of Doctors Visited` ~ .,
                                   data = npha_data,
@@ -55,7 +66,7 @@ rand_forest_model <- randomForest(`Number of Doctors Visited` ~ .,
                                   data = train_data,
                                   importance = TRUE, nperm = 3,
                                   na.action = na.omit,
-                                  ntrees = 700)
+                                  ntrees = 500)
 
 predicted <- predict(rand_forest_model, newdata=test_data)
 predicted
