@@ -1,26 +1,36 @@
-library('tidyverse')
-library('rsample')
-npha_data <- NPHA_doctor_visits
+library(tidyverse)
+library(rsample)
+library(glmnet)
+set.seed(3)
+npha_data <- read_csv("data/NPHA-doctor-visits.csv")
+summary(npha_data$`Number of Doctors Visited`)
 
+#clean data
 npha_data <- npha_data %>% 
   mutate(num_doctors = case_when(`Number of Doctors Visited` == 1 ~ 0,
-                                            `Number of Doctors Visited` == 2 ~ 1,
-                                            `Number of Doctors Visited` == 3 ~ 1))
-npha_data <- mutate_all(npha_data, as.factor)
-logistic_model <- glm(num_doctors ~., 
-                      family = binomial, data = npha_data)
-summary(logistic_model)
-
-data_split = initial_split(npha_data, prop = 0.7)
-train_data = training(data_split)
-test_data = testing(data_split)
-
-pred_prob <- logistic_model %>% 
-  predict(test_data, type = "response")
-
-predicted.classes <- ifelse(pred_prob > 0.5, "1", "0")
-mean(predicted.classes == test_data$num_doctors)
+                                 `Number of Doctors Visited` == 2 ~ 1,
+                                 `Number of Doctors Visited` == 3 ~ 1)) %>% 
+  mutate_all(as.factor) %>% filter(`Phyiscal Health` != -1) %>% 
+  select(-Age)
 
 
-summary(npha_data)
-predicted.classes
+dummies <- as.data.frame(model.matrix(~.-1, npha_data))
+data_split <- initial_split(dummies, prop = 0.3)
+#need to drop response variables
+
+train_x <- training(data_split) %>% select(-num_doctors1, -1:-3) %>% as.matrix()
+train_y <- training(data_split) %>% select(num_doctors1) %>% as.matrix()
+
+test_x <- testing(data_split) %>% select(-num_doctors1, -1:-3)%>% as.matrix()
+test_y <- testing(data_split) %>% select(num_doctors1)%>% as.matrix()
+
+
+#fit model with lasso
+
+fit <- cv.glmnet(train_x,train_y,  family = "binomial", type.measure = "class", nfolds = 10)
+
+preds <- predict(fit, newx = test_x, type = "class", s = "lambda.min")
+
+mean(preds == test_y)
+
+coef(fit)
