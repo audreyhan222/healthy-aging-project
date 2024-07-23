@@ -4,13 +4,10 @@ npha_data <- NPHA_doctor_visits
 
 npha_data <- npha_data %>% 
   mutate(num_doctors = case_when(`Number of Doctors Visited` == 1 ~ 0,
-                                            `Number of Doctors Visited` == 2 ~ 0,
+                                            `Number of Doctors Visited` == 2 ~ 1,
                                             `Number of Doctors Visited` == 3 ~ 1))
 npha_data <- mutate_all(npha_data, as.factor)
-logistic_model <- glm(num_doctors ~ Gender +
-                        Race +
-                        `Prescription Sleep Medication` +
-                        `Medication Keeps Patient from Sleeping`, 
+logistic_model <- glm(num_doctors ~., 
                       family = binomial, data = npha_data)
 summary(logistic_model)
 
@@ -24,6 +21,6 @@ pred_prob <- logistic_model %>%
 predicted.classes <- ifelse(pred_prob > 0.5, "1", "0")
 mean(predicted.classes == test_data$num_doctors)
 
-ggplot(npha_data, aes(x = `num_doctors`,)) +
-  geom_bar() +
-  labs(title = "Unknown vs. Count")
+
+summary(npha_data)
+predicted.classes

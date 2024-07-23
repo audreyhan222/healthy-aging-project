@@ -1,23 +1,15 @@
-library(tidyverse)
-library(rsample)
-library(glmnet)
-library(randomForest)
-library(randomForestExplainer)
-set.seed(3)
 npha_data <- read_csv("data/NPHA-doctor-visits.csv")
-
-
-#clean data
 
 npha_data <- npha_data %>% 
   filter(Race == 1) %>% 
   mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
-                                     `Phyiscal Health` == 5 ~ 4,
-                                     .default = `Phyiscal Health`),
+                                       `Phyiscal Health` == 5 ~ 4,
+                                       .default = `Phyiscal Health`),
          `Dental Health` = case_when(`Dental Health` == 2 ~ 1,
                                      `Dental Health` == 5 ~ 4,
                                      `Dental Health` == 6 ~ 4,
                                      .default = `Dental Health`))
+
 
 npha_data <- npha_data %>% 
   filter(`Phyiscal Health` != -1, `Mental Health` != -1, `Dental Health` != -1, `Trouble Sleeping` != -1, `Prescription Sleep Medication` != -1) %>%
@@ -28,6 +20,10 @@ npha_data <- npha_data %>%
   mutate(Race = case_when(Race != 1 ~ 0, .default = Race)) %>% 
   mutate_all(as.factor) %>%
   select(-Age)
+
+
+
+
 
 npha_data <- npha_data %>% 
   mutate(Physical_Health = `Phyiscal Health`,
@@ -43,30 +39,3 @@ npha_data <- npha_data %>%
          Prescription_Sleep_Medication = `Prescription Sleep Medication`,
          Race = Race,
          .keep = "unused")
-
-
-
-summary(npha_data)
-rand_forest_model <- randomForest(`Number of Doctors Visited` ~ .,
-                                  data = npha_data,
-                                  importance = TRUE, nperm = 3,
-                                  na.action = na.omit)
-plot(rand_forest_model)
-randomForest::importance(rand_forest_model, type=1)
-
-# par(mfrow = c(1, 2))
-# varImpPlot(rand_forest_model, type=1, main = "Importance: permutation")
-# varImpPlot(rand_forest_model, type=2, main = "Importance: node impurity")
-
-data_split <- initial_split(npha_data, prop = 0.7)
-train_data = training(data_split)
-test_data = testing(data_split)
-
-rand_forest_model <- randomForest(`Number of Doctors Visited` ~ .,
-                                  data = train_data,
-                                  importance = TRUE, nperm = 3,
-                                  na.action = na.omit,
-                                  ntrees = 500)
-
-predicted <- predict(rand_forest_model, newdata=test_data)
-mean(test_data$`Number of Doctors Visited` == predicted)
