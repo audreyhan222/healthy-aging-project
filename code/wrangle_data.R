@@ -1,6 +1,6 @@
 library(tidyverse)
 library(dplyr)
-npha_data <- read_csv("data/NPHA-doctor-visits.csv")
+npha_data <- nphaData
 
 npha_data <- npha_data %>% 
   mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
