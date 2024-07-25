@@ -2,21 +2,40 @@
 title: "Race and Gender Distribution"
 author: "Diego Galindo"
 date: "2024-07-19"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
+
 ```{r}
-ggplot(data = agingData,
-       aes(x = Race)) +
-  geom_bar(color = "black",
-           fill = "darkseagreen4") + 
-theme_light()
+ggplot(data = dataAging1,
+       aes(x = reorder(Race, -table(Race)[Race]), fill = Gender)) +
+  geom_bar(position = "dodge",
+           color = "black",
+           size = 0.5) +
+  labs(title = "Distribution of Race") +
+  labs(subtitle = "The Distribution of Race Before Collapsing Data") +
+  scale_fill_manual(values = c("Male" = "dodgerblue3", "Female" = "dodgerblue4"))+
+  xlab("Race") +
+  ylab("Count") +
+theme_gray(base_size = 14, base_family = "Times") 
 ```
 
 
+
 ```{r}
-ggplot(data = agingData,
-       aes(x = Gender)) +
-  geom_bar(color = "black",
-           fill = "darkseagreen4")
+ggplot(data = finalData1,
+       aes(x = reorder(Race, -table(Race)[Race]), fill = Gender)) +
+  geom_bar(stat = "count",
+           position = "dodge",
+           color = "black",
+           size = 0.5) +
+  labs(title = "Distribution of Race") +
+  labs(subtitle = "The Distribution of Race After Collapsing Data") +
+  scale_fill_manual(values = c("Male" = "dodgerblue3", "Female" = "dodgerblue4")) +
+  xlab("Race") +
+  ylab("Count") +
+  labs(color = "Gender") + 
+theme_gray(base_size = 14, base_family = "Times")
 ```
