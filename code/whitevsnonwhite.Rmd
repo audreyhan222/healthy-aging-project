@@ -7,6 +7,8 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(googlesheets4)
 ```
 
 ```{r data cleaning yay}
@@ -63,17 +65,9 @@ white <- npha_data %>%
   filter(Race == 1)
 
 
-data_split <- initial_split(white, prop = 0.7)
-#need to drop response variables
-train <- training(data_split)
-test <- testing(data_split)
 
-test_x <- test %>% 
-          dplyr::select(-`Number of Doctors Visited`)
 
-test_y <- test$`Number of Doctors Visited`
-
-mod <- polr(`Number of Doctors Visited` ~ ., data = train, Hess =TRUE, method = "cloglog")
+mod <- polr(`Number of Doctors Visited` ~ ., data = white, Hess =TRUE, method = "cloglog")
 
 ctable_white <- coef(summary(mod))
 p <- pnorm(abs(ctable_white[,"t value"]), lower.tail = FALSE) * 2
@@ -89,25 +83,14 @@ nonwhite <- npha_data %>%
   filter(Race != 1)
 
 
-data_split <- initial_split(nonwhite, prop = 0.7)
-#need to drop response variables
-train <- training(data_split)
-test <- testing(data_split)
 
-test_x <- test %>% 
-          dplyr::select(-`Number of Doctors Visited`)
-
-test_y <- test$`Number of Doctors Visited`
-
-mod <- polr(`Number of Doctors Visited` ~ ., data = train, Hess =TRUE, method = "cloglog")
+mod <- polr(`Number of Doctors Visited` ~ ., data = nonwhite, Hess =TRUE, method = "cloglog")
 
 
 
 ctable_nonwhite <- coef(summary(mod))
 p <- pnorm(abs(ctable_nonwhite[,"t value"]), lower.tail = FALSE) * 2
 ctable_nonwhite <- cbind(ctable_nonwhite, "p value" = p)
-
-ctable_nonwhite
 
 
 
@@ -116,11 +99,55 @@ filtered_nonwhite <- ctable_nonwhite[,c(1,4)]
 filtered_white <- ctable_white[,c(1,4)]
 
 ctable <- cbind(filtered_white, filtered_nonwhite) %>% `colnames<-`(c("White Coef", "White P-Values", "Non-White Coef", "Non-White P-Values")) 
-apply(ctable, 2, function(x){round(x,digits = 4)})
+
+ctable <- apply(ctable, 2, function(x){round(x,digits = 4)})
+
+ctable
+
+```
+
+
+# 1|2
+```{r}
+one_two_adj_white <- ctable[17,1]
+base_table <- ctable[1:16,]
+base_table[,1] <- base_table[,1] +one_two_adj_white
+
+one_two_adj_nonwhite <- ctable[17,3]
+
+base_table[,3] <- base_table[,3] + one_two_adj_nonwhite
+
+p_val_nonwhite <- ctable[17, 4]
+
+base_table[,4] <- base_table[,4] + p_val_nonwhite
+
+base_table
 
 
 
 ```
 
+# 2|3
+```{r}
+two_three_adj_white <- ctable[18,1]
+base_table <- ctable[1:16,]
+base_table[,1] <- base_table[,1] + two_three_adj_white
 
+two_three_adj_nonwhite <- ctable[18,3]
+
+base_table[,3] <- base_table[,3] + two_three_adj_nonwhite
+
+p_val_white <- ctable[18,2]
+
+
+base_table[,2] <- base_table[,2] + p_val_white
+
+
+p_val_nonwhite <- ctable[18, 4]
+
+base_table[,4] <- base_table[,4] + p_val_nonwhite
+
+base_table
+
+```
 
