@@ -67,9 +67,9 @@ imp_df_white <- importance(rf_white) %>%
   data.frame() %>% 
   mutate(feature = row.names(.)) 
 
-# plot dataframe
+
 ggplot(imp_df_white, aes(x = reorder(feature, MeanDecreaseGini), 
-                        y = MeanDecreaseGini), fill = y) +
+                        y = MeanDecreaseGini, fill = MeanDecreaseGini)) +
   geom_bar(stat='identity') +
   coord_flip() +
   theme_classic() +

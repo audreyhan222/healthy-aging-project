@@ -100,10 +100,25 @@ filtered_white <- ctable_white[,c(1,4)]
 
 ctable <- cbind(filtered_white, filtered_nonwhite) %>% `colnames<-`(c("White Coef", "White P-Values", "Non-White Coef", "Non-White P-Values")) 
 
+nrow(ctable)
 ctable <- apply(ctable, 2, function(x){round(x,digits = 4)})
+
+rownames(ctable) <- c(
+  "Retired", "Not_Working", "Female", 
+  "Good_Physical_Health", "Poor_Physical_Health", 
+  "Good_Mental_Health", "Poor_Mental_Health", 
+  "Good_Dental_Health", "Poor_Dental_Health", 
+  "No_Trouble_Sleeping", "Stress_Affects_Sleep", 
+  "Pain_Affects_Sleep", "Bathroom_Needs_Affect_Sleep", "Unknown_Affects_Sleep",
+  "Medication_Affects_Sleep", "No_Prescription_Sleep_Medication", "1|2", "2|3"
+)
 
 ctable
 
+
+```
+```{r}
+table(white$`Number of Doctors Visited`)
 ```
 
 
