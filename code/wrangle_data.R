@@ -1,7 +1,8 @@
+library(tidyverse)
+library(dplyr)
 npha_data <- read_csv("data/NPHA-doctor-visits.csv")
 
 npha_data <- npha_data %>% 
-  filter(Race == 1) %>% 
   mutate(`Phyiscal Health` = case_when(`Phyiscal Health` == 2 ~ 1,
                                        `Phyiscal Health` == 5 ~ 4,
                                        .default = `Phyiscal Health`),
@@ -19,7 +20,7 @@ npha_data <- npha_data %>%
   mutate(`Prescription Sleep Medication` = case_when(`Prescription Sleep Medication` == 2 ~1, .default = `Prescription Sleep Medication`)) %>% 
   mutate(Race = case_when(Race != 1 ~ 0, .default = Race)) %>% 
   mutate_all(as.factor) %>%
-  select(-Age)
+  dplyr::select(-Age)
 
 
 
@@ -39,3 +40,5 @@ npha_data <- npha_data %>%
          Prescription_Sleep_Medication = `Prescription Sleep Medication`,
          Race = Race,
          .keep = "unused")
+
+summary(npha_data)

@@ -1,13 +1,14 @@
+library('dyplyr')
 da_data <- da37305.0001
 
 cleaned_da_data <- da_data %>% 
-  select(-CASEID:-QF1, -PPSTATEN, -T_Q1:-T_QF1, -PPWORK, -Q45_9:-Q45_11, -Q4_RECODE,
+  dyplyr::select(-CASEID:-QF1, -PPSTATEN, -T_Q1:-T_QF1, -PPWORK, -Q45_9:-Q45_11, -Q4_RECODE,
          -PPINCIMP, -PPEDUCAT, -PPEDUC, -PPREG9, -PPETHM)
 
 
 cleaned_da_data <- cleaned_da_data %>% 
-  select(-PPAGE, -PPHHSIZE, -PPT01:-PPT18OV, -INSURANCE_ANY, -MEDICARE_ANY:-PRIVATE_ANY, -Q45RECODE,
-         -ANY_COST_BARRIER)
+  dyplyr::select(-PPAGE, -PPHHSIZE, -PPT01:-PPT18OV, -INSURANCE_ANY, -MEDICARE_ANY:-PRIVATE_ANY, -Q45RECODE,
+         -ANY_COST_BARRIER, -PPH20026, -PPH21503)
 
 
 
