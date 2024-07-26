@@ -9,7 +9,35 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r Med-Affected Sleep}
+library(tidyverse)
+library(ggplot2)
 
+ggplot(npha_data, aes(x = Medication_Sleeping, fill = `Number of Doctors Visited`)) +
+  geom_bar(position = "fill")
 ```
 
+```{r Prescription_Sleep_Medication}
+ggplot(npha_data, aes(x = Prescription_Sleep_Medication, fill = `Number of Doctors Visited`)) +
+  geom_bar(position = "fill")
+```
+
+
+
+```{r Race}
+ggplot(npha_data, aes(x = Race, fill = `Number of Doctors Visited`)) +
+  geom_bar(position = "fill")
+```
+
+
+```{r Employment}
+ggplot(npha_data, aes(x = Employment, fill = `Number of Doctors Visited`)) +
+  geom_bar(position = "fill")
+```
+
+
+
+```{r Physical Health}
+ggplot(npha_data, aes(x = Physical_Health, fill = `Number of Doctors Visited`)) +
+  geom_bar(position = "fill")
+```
