@@ -195,3 +195,11 @@ white_table
 nonwhite_table
 ```
 
+```{r}
+library(ggplot2)
+
+ggplot(npha_data, aes(x = Medication_Sleeping, fill = `Number of Doctors Visited`)) +
+  geom_bar(position = "fill")
+```
+
+

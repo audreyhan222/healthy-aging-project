@@ -118,7 +118,23 @@ ctable
 
 ```
 ```{r}
-table(white$`Number of Doctors Visited`)
+white_coef <- ctable[1:16,1]
+white_logodds <- exp(white_coef)
+white_logodds_mag <- white_logodds -1
+
+
+
+nonwhite_coef <- ctable[1:16,3]
+nonwhite_logodds <- exp(nonwhite_coef)
+nonwhite_logodds_mag <- nonwhite_logodds-1
+
+logodds_mag_table <- cbind(white_logodds_mag, nonwhite_logodds_mag) %>% `colnames<-`(c("White Logodds Magnitude", "Non-White Logodds Magnitude")) 
+
+logodds_mag_table
+
+```
+```{r}
+
 ```
 
 
@@ -164,5 +180,43 @@ base_table[,4] <- base_table[,4] + p_val_nonwhite
 
 base_table
 
+
 ```
+
+
+#whole dataset log odds
+```{r}
+mod_whole <- polr(`Number of Doctors Visited` ~ ., data = npha_data, Hess =TRUE, method = "cloglog")
+
+
+coeftable <- coef(summary(mod_whole))
+p <- pnorm(abs(coeftable[,"t value"]), lower.tail = FALSE) * 2
+coef_table <- cbind(coeftable, "p value" = p)
+filtered_coefs <- coef_table[,c(1,4)]
+
+
+
+filtered_coefs <- apply(filtered_coefs, 2, function(x){round(x,digits = 4)})
+
+
+
+rownames(filtered_coefs) <- c(
+  "Retired", "Not_Working", "White", "Female",
+  "Good_Physical_Health", "Poor_Physical_Health",
+  "Good_Mental_Health", "Poor_Mental_Health",
+  "Good_Dental_Health", "Poor_Dental_Health",
+  "No_Trouble_Sleeping", "Stress_Affects_Sleep",
+  "Pain_Affects_Sleep", "Bathroom_Needs_Affect_Sleep", "Unknown_Affects_Sleep",
+  "Medication_Affects_Sleep", "No_Prescription_Sleep_Medication", "1|2", "2|3"
+)
+
+
+logodds <- exp(filtered_coefs[1:16, 1])
+
+logodds_mag <- logodds-1
+
+logodds_mag
+
+```
+
 
