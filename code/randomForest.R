@@ -67,7 +67,7 @@ imp_df_white <- importance(rf_white) %>%
   data.frame() %>% 
   mutate(feature = row.names(.)) 
 
-
+# WHITE IMPORTANCE PLOT GRAPH~!!!!!!
 ggplot(imp_df_white, aes(x = reorder(feature, MeanDecreaseGini), 
                         y = MeanDecreaseGini, fill = MeanDecreaseGini)) +
   geom_bar(stat='identity') +
@@ -76,6 +76,42 @@ ggplot(imp_df_white, aes(x = reorder(feature, MeanDecreaseGini),
   labs(
     x     = "Feature",
     y     = "Importance",
-    title = "Feature Importance: White Subset"
+    title = "Feature Importance: Group 1 Subset"
   ) +
-  scale_fill_gradient(low = "steelblue", high ="slateblue")
+  scale_fill_gradient(low = "steelblue", high ="slateblue")+
+  theme_gray(base_size =14, base_family = "Times")
+
+
+
+
+# NONWHITE SUBSET!!!!
+
+
+
+rf_nonwhite <- randomForest(
+  `Number of Doctors Visited` ~ .,
+  data = nonwhite,
+  importance = TRUE,
+  proximity = TRUE,
+  ntrees = 500
+)
+
+
+# make dataframe from importance() output
+imp_df_nonwhite <- importance(rf_nonwhite) %>% 
+  data.frame() %>% 
+  mutate(feature = row.names(.)) 
+
+ggplot(imp_df_nonwhite, aes(x = reorder(feature, MeanDecreaseGini), 
+                         y = MeanDecreaseGini, fill = MeanDecreaseGini)) +
+  geom_bar(stat='identity') +
+  coord_flip() +
+  theme_classic() +
+  labs(
+    x     = "Feature",
+    y     = "Importance",
+    title = "Feature Importance: Group 2 Subset"
+  ) +
+  scale_fill_gradient(low = "steelblue", high ="slateblue")+
+  scale_y_continuous(limits = c(0, 20)) + # Set y-axis limits
+  theme_gray(base_size = 14, base_family = "Times")
