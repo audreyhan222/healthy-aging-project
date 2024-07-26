@@ -79,7 +79,8 @@ ggplot(imp_df_white, aes(x = reorder(feature, MeanDecreaseGini),
     title = "Feature Importance: Group 1 Subset"
   ) +
   scale_fill_gradient(low = "steelblue", high ="slateblue")+
-  theme_gray(base_size =14, base_family = "Times")
+  theme_gray(base_size =14, base_family = "Times") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 
 
 
@@ -113,5 +114,5 @@ ggplot(imp_df_nonwhite, aes(x = reorder(feature, MeanDecreaseGini),
     title = "Feature Importance: Group 2 Subset"
   ) +
   scale_fill_gradient(low = "steelblue", high ="slateblue")+
-  scale_y_continuous(limits = c(0, 20)) + # Set y-axis limits
-  theme_gray(base_size = 14, base_family = "Times")
+  theme_gray(base_size = 14, base_family = "Times") +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
