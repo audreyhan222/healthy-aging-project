@@ -132,6 +132,8 @@ logodds_mag_table <- cbind(white_logodds_mag, nonwhite_logodds_mag) %>% `colname
 
 logodds_mag_table
 
+
+
 ```
 ```{r}
 
@@ -211,9 +213,9 @@ rownames(filtered_coefs) <- c(
 )
 
 
-logodds <- exp(filtered_coefs[1:16, 1])
+logodds <- exp(filtered_coefs[, 1])
 
-logodds_mag <- logodds-1
+logodds_mag <- logodds -1
 
 logodds_mag
 
